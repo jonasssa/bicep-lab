@@ -14,7 +14,7 @@ jobs:
       - name: Azure login
         env:
           CREDENTIALS: ${{ secrets.AZ_CREDS }}
-        run: ./scripts/helpers/Login-AzServicePrincipal.ps1
+        run: ${{ github.workspace }}/scripts/helpers/Login-AzServicePrincipal.ps1
         shell: pwsh
 
       - name: Repo CleanUp
