@@ -21,5 +21,5 @@ Write-Host "Start login with SPN"
 $cred = $servicePrincipalJson | ConvertFrom-Json
 Write-Host $cred.appId
 $securePass = ConvertTo-SecureString -String $cred.clientSecret -AsPlainText -Force
-$credential = [System.Management.Automation.PSCredential]::new($cred.appId, $securePass)
+$credential = [System.Management.Automation.PSCredential]::new($cred.clientId, $securePass)
 Connect-AzAccount -Credential $credential -ServicePrincipal -TenantId $cred.tenantId -Subscription $cred.subscriptionId -WarningAction Ignore | Out-Null
