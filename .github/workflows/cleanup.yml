@@ -1,0 +1,22 @@
+
+name: "CleanUp"
+on:
+  workflow_dispatch:
+  schedule:
+  - cron: "0 0 * * *"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      # Log into Azure
+    - name: Azure login
+        env:
+          CREDENTIALS: ${{ secrets.AZ_CREDS }}
+        run: ./scripts/helpers/Login-AzServicePrincipal.ps1
+        shell: pwsh
+
+      - name: Repo CleanUp
+        run: ./scripts/Cleanup.ps1
+        shell: pwsh
