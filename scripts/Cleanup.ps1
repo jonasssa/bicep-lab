@@ -27,7 +27,8 @@ $resources = Get-AzResource -ResourceGroupName "jonas-test-rg"
 #* Removing all resources
 $resources | ForEach-Object -parallel {
     $ResourceName = $_.Name
+    $ResourceType = $_.ResourceType
     Write-Host "Removing resources in $ResourceName" 
 
-    Remove-AzResource -Name $ResourceName -ResourceGroupName "jonas-test-rg" -Force -Confirm:$false
+    Remove-AzResource -ResourceType $ResourceType -Name $ResourceName -ResourceGroupName "jonas-test-rg" -Force -Confirm:$false
 }
