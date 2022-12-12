@@ -22,4 +22,5 @@ $cred = $servicePrincipalJson | ConvertFrom-Json
 
 $securePass = ConvertTo-SecureString -String $cred.clientSecret -AsPlainText -Force
 $credential = [System.Management.Automation.PSCredential]::new($cred.appId, $securePass)
+Write-Host "${credential}"
 Connect-AzAccount -Credential $credential -ServicePrincipal -TenantId $cred.tenantId -Subscription $cred.subscriptionId -WarningAction Ignore | Out-Null
