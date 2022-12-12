@@ -13,7 +13,7 @@ jobs:
       # Log into Azure
       - name: Azure login
         env:
-          CREDENTIALS: ${{ secrets.AZ_CREDS }}
+          CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
         run: ${{ github.workspace }}/scripts/helpers/Login-AzServicePrincipal.ps1
         shell: pwsh
 
