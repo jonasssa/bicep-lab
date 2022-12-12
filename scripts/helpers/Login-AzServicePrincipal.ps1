@@ -19,8 +19,7 @@ scripts/helpers/Install-Modules.ps1 -Modules @{
 ## Login
 Write-Host "Start login with SPN"
 $cred = $servicePrincipalJson | ConvertFrom-Json
-
+Write-Host $cred
 $securePass = ConvertTo-SecureString -String $cred.clientSecret -AsPlainText -Force
 $credential = [System.Management.Automation.PSCredential]::new($cred.appId, $securePass)
-Write-Host "${credential}"
 Connect-AzAccount -Credential $credential -ServicePrincipal -TenantId $cred.tenantId -Subscription $cred.subscriptionId -WarningAction Ignore | Out-Null
