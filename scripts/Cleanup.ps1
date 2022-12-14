@@ -12,8 +12,9 @@ foreach($ResourceGroup in $ResourceGroups){
     $resources | ForEach-Object -parallel {
         $ResourceName = $_.Name
         $ResourceType = $_.ResourceType
-        Write-Host "Removing resources in $ResourceName" 
+        $ResourceGroupName = $_.ResourceGroupName
+        Write-Host "Removing resources in $ResourceGroupName" 
 
-        Remove-AzResource -ResourceType $ResourceType -Name $ResourceName -ResourceGroupName $ResourceGroup.ResourceGroupName -Force -Confirm:$false
+        Remove-AzResource -ResourceType $ResourceType -Name $ResourceName -ResourceGroupName $ResourceGroupName -Force -Confirm:$false
     }
 }
