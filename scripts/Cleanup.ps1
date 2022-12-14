@@ -1,21 +1,3 @@
-param (
-    [Parameter()]
-    [boolean]
-    $RemoveLocks = $true,
-
-    [Parameter()]
-    [string[]]
-    $excludedResourceGroupNames = @(
-        'AzureBackupRG_westeurope_1'
-        'AzureBackupRG_westeurope_2'
-        'AzureBackupRG_westeurope_3'
-        'AzureBackupRG_westeurope_4'
-        'AzureBackupRG_westeurope_5'
-        'lz'
-        'lz-network'
-        'NetworkWatcherRG'
-    )
-)
 #* Install modules
 scripts/helpers/Install-Modules.ps1 -Modules @{
     "Az.Resources" = "latest"
@@ -32,6 +14,6 @@ foreach($ResourceGroup in $ResourceGroups){
         $ResourceType = $_.ResourceType
         Write-Host "Removing resources in $ResourceName" 
 
-        Remove-AzResource -ResourceType $ResourceType -Name $ResourceName -ResourceGroupName $ResourceGroup.Name -Force -Confirm:$false
+        Remove-AzResource -ResourceType $ResourceType -Name $ResourceName -ResourceGroupName $ResourceGroup.ResourceGroupName -Force -Confirm:$false
     }
 }
