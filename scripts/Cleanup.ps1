@@ -22,13 +22,16 @@ scripts/helpers/Install-Modules.ps1 -Modules @{
 }
 
 #* Get resourcegroups that are not part of the excluded tag nor groups containing the keep tag
-$resources = Get-AzResource -ResourceGroupName "jonas-test-rg"
+$ResourceGroups = Get-AzResourceGroup
+foreach($ResourceGroup in $ResourceGroups){
+    $resources = Get-AzResource -ResourceGroupName $ResourceGroup.Name
 
-#* Removing all resources
-$resources | ForEach-Object -parallel {
-    $ResourceName = $_.Name
-    $ResourceType = $_.ResourceType
-    Write-Host "Removing resources in $ResourceName" 
+    #* Removing all resources
+    $resources | ForEach-Object -parallel {
+        $ResourceName = $_.Name
+        $ResourceType = $_.ResourceType
+        Write-Host "Removing resources in $ResourceName" 
 
-    Remove-AzResource -ResourceType $ResourceType -Name $ResourceName -ResourceGroupName "jonas-test-rg" -Force -Confirm:$false
+        Remove-AzResource -ResourceType $ResourceType -Name $ResourceName -ResourceGroupName $ResourceGroup.Name -Force -Confirm:$false
+    }
 }
