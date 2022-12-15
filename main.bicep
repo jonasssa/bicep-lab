@@ -1,34 +1,60 @@
-@minLength(3)
-@maxLength(11)
-param storagePrefix string
+@description('The name of the Managed Cluster resource.')
+param clusterName string = 'aks101cluster'
 
-@allowed([
-  'Standard_LRS'
-  'Standard_GRS'
-  'Standard_RAGRS'
-  'Standard_ZRS'
-  'Premium_LRS'
-  'Premium_ZRS'
-  'Standard_GZRS'
-  'Standard_RAGZRS'
-])
-param storageSKU string = 'Standard_LRS'
-
+@description('The location of the Managed Cluster resource.')
 param location string = resourceGroup().location
 
-var uniqueStorageName = '${storagePrefix}${uniqueString(resourceGroup().id)}'
+@description('Optional DNS prefix to use with hosted Kubernetes API server FQDN.')
+param dnsPrefix string
 
-resource stg 'Microsoft.Storage/storageAccounts@2021-04-01' = {
-  name: uniqueStorageName
+@description('Disk size (in GB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023. Specifying 0 will apply the default disk size for that agentVMSize.')
+@minValue(0)
+@maxValue(1023)
+param osDiskSizeGB int = 0
+
+@description('The number of nodes for the cluster.')
+@minValue(1)
+@maxValue(50)
+param agentCount int = 3
+
+@description('The size of the Virtual Machine.')
+param agentVMSize string = 'standard_d2s_v3'
+
+@description('User name for the Linux Virtual Machines.')
+param linuxAdminUsername string
+
+@description('Configure all linux machines with the SSH RSA public key string. Your key should include three parts, for example \'ssh-rsa AAAAB...snip...UcyupgH azureuser@linuxvm\'')
+param sshRSAPublicKey string
+
+resource aks 'Microsoft.ContainerService/managedClusters@2022-05-02-preview' = {
+  name: clusterName
   location: location
-  sku: {
-    name: storageSKU
+  identity: {
+    type: 'SystemAssigned'
   }
-  kind: 'StorageV2'
   properties: {
-    supportsHttpsTrafficOnly: true
+    dnsPrefix: dnsPrefix
+    agentPoolProfiles: [
+      {
+        name: 'agentpool'
+        osDiskSizeGB: osDiskSizeGB
+        count: agentCount
+        vmSize: agentVMSize
+        osType: 'Linux'
+        mode: 'System'
+      }
+    ]
+    linuxProfile: {
+      adminUsername: linuxAdminUsername
+      ssh: {
+        publicKeys: [
+          {
+            keyData: sshRSAPublicKey
+          }
+        ]
+      }
+    }
   }
 }
 
-output storageEndpoint object = stg.properties.primaryEndpoints
- 
+output controlPlaneFQDN string = aks.properties.fqdn
